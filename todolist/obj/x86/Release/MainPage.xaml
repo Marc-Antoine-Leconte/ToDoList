@@ -1,0 +1,215 @@
+﻿<Page
+    x:Class="todolist.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:todolist"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    >
+
+    <Grid x:ConnectionId='1' Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="MainBg" Margin="15,15,15,15">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="299*"/>
+            <ColumnDefinition Width="1201*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid x:ConnectionId='2' Name="RightPannel" 
+              Grid.Column="1"
+              >
+            <ScrollViewer Padding="30,30,30,30"
+                          Margin="30,30,30,30"
+                          Width="Auto"
+                          Height="Auto"
+                          >
+                <ListView x:ConnectionId='20' Name="ListToDo"                       IsItemClickEnabled="true">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="BorderBrush" Value="LightGray" />
+                            <Setter Property="BorderThickness" Value="1,1,1,1" />
+                            <Setter Property="Margin" Value="0,0,0,15" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate                      >
+                            <Grid x:ConnectionId='21'>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="900"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:ConnectionId='22'                
+                                   Grid.Column="0"
+                                   VerticalAlignment="center"
+                                           HorizontalAlignment="Left"/>
+                                <Button x:ConnectionId='23'                 Grid.Column="1" 
+                                        BorderThickness="0,0,0,0"
+                                        HorizontalAlignment="Right"
+                                        Background="DarkRed"
+                                        Foreground="White"
+                                        Height="40"
+                                        Width="40"
+                                                          >x</Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+        </Grid>
+
+        <Grid x:ConnectionId='3' Name="LeftPannel" 
+              Grid.Column="0"
+              Background="LightBlue"
+              >
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button x:ConnectionId='18' x:Name="CallGraphButton" Content="Connect" HorizontalAlignment="Right" Padding="5"                               Margin="5" FontFamily="Segoe Ui"/>
+                        <Button x:ConnectionId='19' x:Name="SignOutButton" Content="Sign Out" HorizontalAlignment="Right" Padding="5"                             Margin="5" Visibility="Collapsed" FontFamily="Segoe Ui"/>
+                    </StackPanel>
+                    <TextBox x:ConnectionId='16' x:Name="TokenInfoText" TextWrapping="Wrap" MinHeight="70" Margin="5" FontFamily="Segoe Ui"
+                              BorderThickness="0,0,0,0"
+                             Background="Transparent" IsEnabled="False"/>
+                    <TextBox x:ConnectionId='17' x:Name="ResultText" TextWrapping="Wrap" MinHeight="120" Margin="5" 
+                             FontFamily="Segoe Ui"
+                             BorderThickness="0,0,0,0"
+                             Background="Transparent"
+                             Foreground="Red"
+                             FontStyle="Italic" IsEnabled="False"/>
+                </StackPanel>
+            </Grid>
+
+            <Button x:ConnectionId='14' Grid.Row="1"
+                                      
+                    Background="OrangeRed" 
+                    Foreground="White" 
+                    Height="Auto"
+                    Width="Auto"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="center"
+                    FontSize="30"
+                    Padding="20,10,20,10"
+                    >
+               Add A Task</Button>
+            <ComboBox x:ConnectionId='15' Name="Filter" HorizontalAlignment="center" Grid.Row="1" VerticalAlignment="Bottom" Width="200"                               Margin="0,0,0,80">
+                <ComboBoxItem Background="LightGray" Content="All" IsSelected="True"/>
+                <ComboBoxItem Background="White" Foreground="White" Content="White"/>
+                <ComboBoxItem Background="IndianRed" Foreground="IndianRed" Content="Red"/>
+                <ComboBoxItem Background="LightGreen" Foreground="LightGreen" Content="Green"/>
+                <ComboBoxItem Background="LightBlue" Foreground="LightBlue" Content="Blue"/>
+                <ComboBoxItem Background="LightYellow" Foreground="LightYellow" Content="Yellow"/>
+            </ComboBox>
+        </Grid>
+
+        <Popup x:ConnectionId='4' x:Name="Popup_edit" IsOpen="false" Grid.Column="1" Margin="0,45,321,225" RenderTransformOrigin="0.512,0.527">
+
+
+            <Grid x:ConnectionId='6' x:Name="PopupContent" Background="WhiteSmoke"
+                  Padding="50,50,50,50">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="51*"/>
+                    <RowDefinition Height="129*"/>
+                    <RowDefinition Height="20*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Grid.Column="0" Height="135" Width="600">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="23*"/>
+                        <RowDefinition Height="30*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox x:ConnectionId='10' Name="Title" 
+                                 Grid.Row="0"
+                                Background="White"
+                                Text="ToDo Title" PlaceholderText="Title" Height="40"
+                                 Padding="10,10,5,5"
+                                >
+                    </TextBox>
+
+                    <Grid Grid.Row="1" Height="78" Width="700">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <CalendarDatePicker x:ConnectionId='11' x:Name="End" Grid.Column="0" Header="Timeline"/>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+                            <ComboBox x:ConnectionId='13' x:Name="Status" Grid.Row="1" >
+                                <ComboBoxItem Content="To Do" IsSelected="true"/>
+                                <ComboBoxItem Content="Work in progress"/>
+                                <ComboBoxItem Content="Waiting validation"/>
+                                <ComboBoxItem Content="Done"/>
+                            </ComboBox>
+                     
+                        </Grid>
+
+                        <Grid Grid.Column="2" Height="78" Width="700">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+                            <ComboBox x:ConnectionId='12' x:Name="Color" Grid.Row="1">
+                                <ComboBoxItem Background="White" Foreground="White" Content="White"/>
+                                <ComboBoxItem Background="IndianRed" Foreground="IndianRed" Content="Red"/>
+                                <ComboBoxItem Background="LightGreen" Foreground="LightGreen" Content="Green"/>
+                                <ComboBoxItem Background="LightBlue" Foreground="LightBlue" Content="Blue"/>
+                                <ComboBoxItem Background="LightYellow" Foreground="LightYellow" Content="Yellow"/>
+                            </ComboBox>
+                        </Grid>
+                    
+                    </Grid>
+
+                </Grid>
+
+                <Grid Grid.Column="0" Grid.Row="1" Height="396" Width="600">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="4*"/>
+                        <RowDefinition Height="25*"/>
+                    </Grid.RowDefinitions>
+                    <TextBox x:ConnectionId='9' Name="Description" 
+                                Grid.Row="1" Background="White"
+                                Margin="0,0,0,20"
+                                Padding="20,20,20,20"
+                                Text="Ceci est une description" PlaceholderText="Description" 
+                                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                AcceptsReturn="True" TextWrapping="Wrap"
+                                >
+                    </TextBox>
+                </Grid>
+
+
+                <Grid Grid.Row="5" Height="69" Width="600">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="249*"/>
+                        <ColumnDefinition Width="205*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:ConnectionId='7' x:Name="submit" Grid.Column="1"  Background="CornflowerBlue" Content="Valider" Height="32" Width="66" Foreground="White"                   />
+                    <Button x:ConnectionId='8'                 
+                            Grid.Column="2" Height="32" Width="146"
+                            >Audio Description</Button>
+                </Grid>
+            </Grid>
+        </Popup>
+
+        <Grid x:ConnectionId='5' Name="filter" Grid.ColumnSpan="2" Visibility="Collapsed">
+            <Grid.Background>
+                <SolidColorBrush Color="Black" Opacity="0.5"/>
+            </Grid.Background>
+        </Grid>
+
+    </Grid>
+
+</Page>
+
