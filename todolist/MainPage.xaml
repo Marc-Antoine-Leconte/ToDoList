@@ -70,8 +70,8 @@
             <Grid Grid.Row="0">
                 <StackPanel BorderThickness="0,0,0,0">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button x:Name="CallGraphButton" Content="Connect" HorizontalAlignment="Right" Padding="5" Click="CallGraphButton_Click" Margin="5" FontFamily="Segoe Ui"/>
-                        <Button x:Name="SignOutButton" Content="Sign Out" HorizontalAlignment="Right" Padding="5" Click="SignOutButton_Click" Margin="5" Visibility="Collapsed" FontFamily="Segoe Ui"/>
+                        <Button x:Name="CallGraphButton" Content="Connect" HorizontalAlignment="Right" Padding="5" Click="MSConnexion" Margin="5" FontFamily="Segoe Ui"/>
+                        <Button x:Name="SignOutButton" Content="Sign Out" HorizontalAlignment="Right" Padding="5" Click="MSDeconnexion" Margin="5" Visibility="Collapsed" FontFamily="Segoe Ui"/>
                     </StackPanel>
                     <TextBlock x:Name="TokenInfoText" Text="Gest" TextWrapping="Wrap" Margin="5" FontFamily="Segoe Ui" Foreground="DarkBlue"/>
                     <TextBlock x:Name="ResultText" TextWrapping="Wrap" Margin="5" 

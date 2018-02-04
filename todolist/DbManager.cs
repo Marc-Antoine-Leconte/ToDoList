@@ -4,8 +4,14 @@ using System;
 
 namespace todolist
 {
+    /// <summary>
+    /// This class regroup all the functions for saving the tasks in local file
+    /// </summary>
     class DbManager
     {
+        /// <summary>
+        /// Save all the current tasks in database
+        /// </summary>
         public async void SaveDb()
         {
             string text = "";
@@ -29,6 +35,9 @@ namespace todolist
             await FileIO.WriteTextAsync(file, text);
         }
 
+        /// <summary>
+        /// Load the local save into the todolist
+        /// </summary>
         public async void LoadDb()
         {
             bool run = true;
@@ -101,6 +110,9 @@ namespace todolist
             }
         }
 
+        /// <summary>
+        /// Clear the database and remove the save file
+        /// </summary>
         public async void ResetDb()
         {
             StorageFile filed = await ApplicationData.Current.LocalFolder.GetFileAsync("Save.db");

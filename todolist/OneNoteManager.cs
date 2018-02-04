@@ -6,16 +6,25 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Net.Http;
+using System.Text;
 using System.Linq;
 using System.Net;
 using System;
-using System.Text;
 
 namespace todolist
 {
+    /// <summary>
+    /// This class regroup all the functions allowing to get the onenote pages and contents
+    /// </summary>
     class OneNoteManager
     {
-        //---------------------- GET PAGES
+        /// <summary>
+        /// Function of GET
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="token"></param>
+        /// <param name="stringFormat"></param>
+        /// <returns></returns>
         public async Task<object> GetHttpContentWithToken(string url, string token, bool stringFormat = false)
         {
             var httpClient = new System.Net.Http.HttpClient();
@@ -37,6 +46,11 @@ namespace todolist
             }
         }
 
+        /// <summary>
+        /// Get All the pages
+        /// </summary>
+        /// <param name="response"></param>
+        /// <returns></returns>
         private static async Task<List<ApiBaseResponse>> TranslateListOfPagesResponse(HttpResponseMessage response)
         {
             var apiBaseResponse = new List<ApiBaseResponse>();
@@ -63,8 +77,15 @@ namespace todolist
             return apiBaseResponse;
         }
 
-        //---------------------- POST PAGES
 
+        /// <summary>
+        /// POST function
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="accessToken"></param>
+        /// <param name="content"></param>
+        /// <param name="title"></param>
+        /// <returns></returns>
         public static async Task<ApiBaseResponse> newPage(string url, string accessToken, string content, string title)
         {
             var client = new HttpClient();
@@ -98,6 +119,12 @@ namespace todolist
             return await TranslateResponse(response);
         }
 
+        /// <summary>
+        /// translate the response of MS 
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="expectedStatusCode"></param>
+        /// <returns></returns>
         public static async Task<ApiBaseResponse> TranslateResponse(HttpResponseMessage response, HttpStatusCode expectedStatusCode = HttpStatusCode.Created)
         {
             ApiBaseResponse apiBaseResponse;
