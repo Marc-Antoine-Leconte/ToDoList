@@ -8,23 +8,29 @@ using System;
 
 namespace todolist
 {
+    /// <summary>
+    /// The main page of the application
+    /// </summary>
     public sealed partial class MainPage : Page
     {
-        string _graphAPIEndpoint = "https://graph.microsoft.com/v1.0/me";
-        string _oneNoteEndPoint = "https://graph.microsoft.com/v1.0/me/onenote/pages";
-        string[] _scopes = new string[] { "user.read", "notes.create", "notes.read", "notes.read.all", "notes.readwrite", "notes.readwrite.all", "notes.readwrite.createdbyapp"};
+        string _graphAPIEndpoint = "https://graph.microsoft.com/v1.0/me"; ///> the entry point for the MS authentification
+        string _oneNoteEndPoint = "https://graph.microsoft.com/v1.0/me/onenote/pages"; /// the entry point to get the MS onenote pages
+        string[] _scopes = new string[] { "user.read", "notes.create", "notes.read", "notes.read.all", "notes.readwrite", "notes.readwrite.all", "notes.readwrite.createdbyapp"}; ///> the scope of authentification asked to the user
 
         public MainPage()
         {
             this.InitializeComponent();
             Managers.Instance.db.LoadDb();
             foreach (var it in Managers.Instance.taskList)
-            {
                 ListToDo.Items.Add(it.Title);
-            }
         }
 
-        private async void CallGraphButton_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Permit the connexion to MS
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void MSConnexion(object sender, RoutedEventArgs e)
         {
             ResultText.Text = "";
             AuthenticationResult authResult = null;
@@ -56,13 +62,18 @@ namespace todolist
             {
                 ResultText.Text = "";
                 await Managers.Instance.onenote.GetHttpContentWithToken(_graphAPIEndpoint, authResult.AccessToken);
-                DisplayBasicTokenInfo(authResult);
+                DisplayUserName(authResult);
                 this.SignOutButton.Visibility = Visibility.Visible;
                 ConnectOneNote();
             }
         }
 
-        private void SignOutButton_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Deconnect the user from MS
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MSDeconnexion(object sender, RoutedEventArgs e)
         {
             ResultText.Text = "";
             if (App.PublicClientApp.Users.Any())
@@ -88,7 +99,11 @@ namespace todolist
             Managers.Instance.db.SaveDb();
         }
 
-        private void DisplayBasicTokenInfo(AuthenticationResult authResult)
+        /// <summary>
+        /// Display UserName after a connection
+        /// </summary>
+        /// <param name="authResult"></param>
+        private void DisplayUserName(AuthenticationResult authResult)
         {
             TokenInfoText.Text = "";
             if (authResult != null)
@@ -102,8 +117,17 @@ namespace todolist
             TokenInfoText.Text += Managers.Instance.user.UserName + Environment.NewLine;
         }
 
+        /// <summary>
+        /// Load Notes from MS onenote 
+        /// </summary>
         private async void ConnectOneNote()
         {
+            COLOR color = COLOR.WHITE;
+            STATUS status = STATUS.TODO;
+            string description = "";
+            int pos1 = 0;
+            int pos2 = 0;
+
             ResultText.Text = "";
             var sectionList = await Managers.Instance.onenote.GetHttpContentWithToken(_oneNoteEndPoint, Managers.Instance.user.AccessToken);
             List <ApiBaseResponse> data = sectionList as List<ApiBaseResponse>;
@@ -113,21 +137,57 @@ namespace todolist
             {
                 foreach (var it in data)
                 {
-                    PageResponse page = it as PageResponse;
-                    //ResultText.Text += "\n " + page.ContentUrl;
-                    var content = await Managers.Instance.onenote.GetHttpContentWithToken(page.ContentUrl, Managers.Instance.user.AccessToken, true);
-                    //ResultText.Text += "\n content = " + content;
+                    color = COLOR.WHITE;
+                    status = STATUS.TODO;
 
-                    Managers.Instance.AddToDo(page.Title, content as string, DateTime.Now, DateTime.Now, STATUS.TODO, COLOR.BLUE);
-                    ListToDo.Items.Add(page.Title);
+                    PageResponse page = it as PageResponse;
+                    var content = await Managers.Instance.onenote.GetHttpContentWithToken(page.ContentUrl, Managers.Instance.user.AccessToken, true);
+                    description = content as string;
+                    
+                    if ((pos1 = description.IndexOf("COLOR=")) != -1 && (pos2 = description.IndexOf(";", pos1)) != -1)
+                    {
+                        var tmp = description.Substring(pos1 + 6, pos2 - pos1 - 6);
+                        for (var i = 0; i < 5; ++i)
+                        {
+                            COLOR color_ = (COLOR)i;
+                            if (color_.ToString() == tmp)
+                            {
+                                color = (COLOR)i;
+                                description = description.Substring(0, pos1) + description.Substring(pos2 + 1);
+                                break;
+                            }
+                        }
+                    }
+
+                    if ((pos1 = description.IndexOf("STATUS=")) != -1 && (pos2 = description.IndexOf(";", pos1)) != -1)
+                    {
+                        var tmp = description.Substring(pos1 + 7, pos2 - pos1 - 7);
+                        for (var i = 0; i < 4; ++i)
+                        {
+                            STATUS status_ = (STATUS)i;
+                            if (status_.ToString() == tmp)
+                            {
+                                status = (STATUS)i;
+                                description = description.Substring(0, pos1) + description.Substring(pos2 + 1);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (Managers.Instance.AddToDo(page.Title, description, DateTime.Now, DateTime.Now, status, color))
+                        ListToDo.Items.Add(page.Title);
                 }
             }
             Managers.Instance.db.SaveDb();
         }
 
+        /// <summary>
+        /// Open the Pop Up allowing the edition of a task
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OpenPopUp(object sender, ItemClickEventArgs e)
         {
-
             var id = e.ClickedItem.ToString();
 
             foreach (var it in Managers.Instance.taskList)
@@ -136,7 +196,7 @@ namespace todolist
                 {
                     Title.Text = it.Title;
                     Status.SelectedIndex = (int)it.Status;
-                    Description.Text = HtmlDecode(it.Description);
+                    Description.Text = Managers.Instance.HtmlDecode(it.Description);
                     End.Date = it.End;
                     Color.SelectedIndex = (int)it.Color;
 
@@ -147,26 +207,11 @@ namespace todolist
             }
         }
 
-        private string HtmlDecode(string txt)
-        {
-            int pos1;
-            int pos2;
-            string ret = txt;
-            
-            pos1 = ret.IndexOf("<title>");
-            pos2 = ret.IndexOf("</title>");
-            if (pos1 >= 0 && pos2 >= 0)
-                ret = ret.Substring(0, pos1) + ret.Substring(pos2 + 8);
-
-            while (ret.IndexOf("<") != -1 && ret.IndexOf(">") != -1)
-            {
-                pos1 = ret.IndexOf("<");
-                pos2 = ret.IndexOf(">");
-                ret = ret.Substring(0, pos1) + ret.Substring(pos2 + 1);
-            }
-            return ret;
-        }
-
+        /// <summary>
+        /// Open Pop up for a creation of a task
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OpenPopUp(object sender, RoutedEventArgs e)
         {
             Title.Text = "";
@@ -179,6 +224,11 @@ namespace todolist
             Popup_edit.IsOpen = true;
         }
 
+        /// <summary>
+        /// Delete a todo task
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DeleteToDo(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
@@ -192,8 +242,14 @@ namespace todolist
                     return;
                 }
             }
+            Managers.Instance.db.SaveDb();
         }
 
+        /// <summary>
+        /// Close the pop up and update or create a task
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ClosePopUp(object sender, RoutedEventArgs e)
         {
             if (Title.Text == null || Title.Text == "")
@@ -211,6 +267,7 @@ namespace todolist
 
                     filter.Visibility = Visibility.Collapsed;
                     Popup_edit.IsOpen = false;
+                    Managers.Instance.db.SaveDb();
                     return;
                 }
             }
@@ -227,20 +284,21 @@ namespace todolist
             }
             filter.Visibility = Visibility.Collapsed;
             Popup_edit.IsOpen = false;
+            Managers.Instance.db.SaveDb();
         }
 
-        private void ReadText(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Read a text with a synthesis voice
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void ReadText(object sender, RoutedEventArgs e)
         {
             string text = "Description not found";
 
             if (Description.Text != "")
                 text = Description.Text;
 
-            Read(text);
-        }
-
-        private async void Read(string text)
-        {
             MediaElement mediaElement = new MediaElement();
             var synth = new Windows.Media.SpeechSynthesis.SpeechSynthesizer();
             Windows.Media.SpeechSynthesis.SpeechSynthesisStream stream = await synth.SynthesizeTextToStreamAsync(text);
@@ -248,6 +306,11 @@ namespace todolist
             mediaElement.Play();
         }
 
+        /// <summary>
+        /// Redisplay all the tasks
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ReloadList(object sender, SelectionChangedEventArgs e)
         {
             var choose = Filter.SelectedIndex;
@@ -262,6 +325,11 @@ namespace todolist
             }
         }
 
+        /// <summary>
+        /// Exit pop up without saving anything
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void QuitPopUp(object sender, RoutedEventArgs e)
         {
             filter.Visibility = Visibility.Collapsed;

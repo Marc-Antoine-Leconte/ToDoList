@@ -43,6 +43,9 @@ namespace OneNoteServiceSamplesWinUniversal.OneNoteApi
 
     }
 
+    /// <summary>
+    /// Links contained in a API base response
+    /// </summary>
     public class Links
     {
         /// <summary>
@@ -56,16 +59,19 @@ namespace OneNoteServiceSamplesWinUniversal.OneNoteApi
         public HrefUrl OneNoteWebUrl { get; set; }
     }
 
+    /// <summary>
+    /// Url reference
+    /// </summary>
     public class HrefUrl
     {
         public string Href { get; set; }
     }
 
+    /// <summary>
+    /// Reponse of MS containing page
+    /// </summary>
     public class PageResponse : ApiBaseResponse
     {
-        /// <summary>
-        /// Title of the page
-        /// </summary>
         public string Title;
 
         public string ContentUrl;
