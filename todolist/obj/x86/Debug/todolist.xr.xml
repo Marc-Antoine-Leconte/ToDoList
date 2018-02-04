@@ -16,6 +16,8 @@
       <RootProperty Name="RowDefinitions" />
       <RootProperty Name="Visibility" />
       <RootProperty Name="Padding" />
+      <RootProperty Name="HorizontalAlignment" />
+      <RootProperty Name="VerticalAlignment" />
       <RootProperty Name="Height" />
       <RootProperty Name="Width" />
       <RootMethod Name="GetColumn" />

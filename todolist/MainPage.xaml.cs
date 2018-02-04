@@ -6,7 +6,6 @@ using Windows.UI.Xaml;
 using System.Linq;
 using System;
 
-
 namespace todolist
 {
     public sealed partial class MainPage : Page
@@ -18,6 +17,11 @@ namespace todolist
         public MainPage()
         {
             this.InitializeComponent();
+            Managers.Instance.db.LoadDb();
+            foreach (var it in Managers.Instance.taskList)
+            {
+                ListToDo.Items.Add(it.Title);
+            }
         }
 
         private async void CallGraphButton_Click(object sender, RoutedEventArgs e)
@@ -81,6 +85,7 @@ namespace todolist
                     ResultText.Text = $"Error signing out user: {ex.Message}";
                 }
             }
+            Managers.Instance.db.SaveDb();
         }
 
         private void DisplayBasicTokenInfo(AuthenticationResult authResult)
@@ -117,6 +122,7 @@ namespace todolist
                     ListToDo.Items.Add(page.Title);
                 }
             }
+            Managers.Instance.db.SaveDb();
         }
 
         private void OpenPopUp(object sender, ItemClickEventArgs e)
@@ -149,7 +155,8 @@ namespace todolist
             
             pos1 = ret.IndexOf("<title>");
             pos2 = ret.IndexOf("</title>");
-            ret = ret.Substring(0, pos1) + ret.Substring(pos2 + 8);
+            if (pos1 >= 0 && pos2 >= 0)
+                ret = ret.Substring(0, pos1) + ret.Substring(pos2 + 8);
 
             while (ret.IndexOf("<") != -1 && ret.IndexOf(">") != -1)
             {
@@ -255,26 +262,10 @@ namespace todolist
             }
         }
 
-        private void SaveToDb()
+        private void QuitPopUp(object sender, RoutedEventArgs e)
         {
-            /*var DBPath = Application.StartupPath + "\\Test.mdb";
-
-            conn = new OleDbConnection("Provider=Microsoft.Jet.OleDb.4.0;"
-                + "Data Source=" + DBPath);
-            conn.Open();
-            */
-            
-
-            //OleDbCommand cmd = new OleDbCommand();
-            //OleDbConnection con = new OleDbConnection(@"Provider =Microsoft.Jet.OLEDB.4.0;Data Source=" + Directory.GetCurrentDirectory().Replace('/', '\\') + "\\todolist.mdb");
-
-            // create a new database connection:
-            /*SQLiteConnection sqlite_conn =
-              new SQLiteConnection("Data Source=database.sqlite;Version=3;");
-
-            // open the connection:
-            SQLiteCommand sqlite_conn.Open();
-        */
+            filter.Visibility = Visibility.Collapsed;
+            Popup_edit.IsOpen = false;
         }
     }
 }

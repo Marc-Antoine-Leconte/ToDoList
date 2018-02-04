@@ -21,18 +21,23 @@ namespace todolist
         public List<ToDo> taskList;
         public UserManager user;
         public OneNoteManager onenote;
+        public DbManager db;
 
         private Managers()
         {
             taskList = new List<ToDo>();
             user = new UserManager("Gest", "", "");
             onenote = new OneNoteManager();
+            db = new DbManager();
         }
 
         public void AddToDo(string title, string description, DateTime start, DateTime end, STATUS status, COLOR color)
         {
-            ToDo NewToDo = new ToDo(title, description, start, end, status, color);
-            taskList.Add(NewToDo);
+            if (title != "")
+            {
+                ToDo NewToDo = new ToDo(title, description, start, end, status, color);
+                taskList.Add(NewToDo);
+            }
         }
     }
 }

@@ -85,6 +85,7 @@ namespace todolist
         /// <param name="e">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
+            Managers.Instance.db.SaveDb();
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 
@@ -97,9 +98,15 @@ namespace todolist
         /// <param name="e">Details about the suspend request.</param>
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
+            Managers.Instance.db.SaveDb();
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        static void OnProcessExit(object sender, EventArgs e)
+        {
+            Managers.Instance.db.SaveDb();
         }
     }
 }
